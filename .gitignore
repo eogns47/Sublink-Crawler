@@ -1,0 +1,7 @@
+**/node_modules
+targets.txt
+results.txt
+blacklist.txt
+.prettier*
+*.txt
+test*

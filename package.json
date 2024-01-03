@@ -1,0 +1,19 @@
+{
+  "name": "pupeteer-trial",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prettify": "prettier --write *.js **/*.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^2.1.1",
+    "yargs": "^15.4.1"
+  },
+  "devDependencies": {
+    "prettier": "^3.1.1"
+  }
+}
