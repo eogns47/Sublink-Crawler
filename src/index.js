@@ -29,9 +29,9 @@ function cliHandler(yargs, argsMap) {
     }
 
     yargs.usage('Usage: node $0 -' + targetOptKW + ' targets.txt -' + resultOptKW + ' results.txt [options]');
-    //도움말
+    //help
     yargs.help('h');
-    //별칭
+    //alias
     yargs.alias('h', 'help');
     yargs.demandOption([targetOptKW]);
     yargs.boolean(['h']);

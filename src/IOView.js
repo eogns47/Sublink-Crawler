@@ -2,6 +2,7 @@ const fs = require('fs');
 // Read targets from a file
 const path = require('path');
 const Extensions = require('./Config/Extensions.js');
+const Validator = require('./Validator.js');
 
 async function readTargets(targetInput) {
     const targetPath = __dirname + '/../inputs/' + targetInput;
@@ -52,14 +53,9 @@ async function classifyExtension(AllURLs) {
         return map;
     }, {});
 
-    AllURLs.map((url) => {
-        for (const ext of extensions) {
-            //consider when extension is uppercase
-            if (url.includes(ext) || url.includes(ext.toUpperCase())) {
-                extensionMap[ext]++;
-                break;
-            }
-        }
+    AllURLs.map(async (url) => {
+        var ext = await Validator.validateIncludeExtension(url);
+        if (ext != false) extensionMap[ext]++;
     });
 
     return extensionMap;
@@ -68,10 +64,9 @@ async function classifyExtension(AllURLs) {
 async function saveResults(target, resultPath, AllURLs) {
     var endResult = {};
     endResult[target] = {};
-
+    endResult[target].Count = AllURLs.length;
     endResult[target].Extension = {};
     endResult[target].URLs = AllURLs;
-
     var extensionMap = await classifyExtension(AllURLs);
     endResult[target].Extension = extensionMap;
 

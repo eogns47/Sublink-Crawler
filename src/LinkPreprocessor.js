@@ -2,19 +2,12 @@ const url = require('url');
 const MessageHandler = require('./messageHandler.js');
 const IOView = require('./IOView.js');
 
-async function validateLinkIsWebPage(url) {
-    if (url.includes('.PDF') || url.includes('.PNG')) return false;
-    else {
-        return true;
-    }
-}
-
 // Filter for blacklist (result will still be recorded, but wont be crawled)
 async function blacklistFilter(urls, blacklistPath) {
     try {
         // hard match
         const blacklisted = await IOView.readTargets(blacklistPath);
-
+        console.log(blacklisted.toString());
         // filter urls for those entries
         return urls.filter((url) => {
             return !blacklisted.some((entry) => url.includes(entry));
@@ -33,17 +26,17 @@ function httpFilter(urls) {
 }
 
 function IncludeBaseURLFIlter(urls, base) {
-    // URL에서 "www." 다음에 오는 부분 추출
+    // Remove "www." from the URL. Extract the part that follows
     const filteredBase = extractProtocolNextPart(base);
 
-    // 입력된 문자열에 해당 부분이 포함되면 false 반환
+    // Returns false if the input string contains that part
     return urls.filter((url) => {
         return url.includes(filteredBase);
     });
 }
 
 function extractProtocolNextPart(url) {
-    // 프로토콜 다음에 오는 부분 추출
+    // Extract the part that follows the protocol
     const protocols = ['http://', 'https://', 'www.'];
     let nextPart = url;
 
@@ -57,7 +50,10 @@ function extractProtocolNextPart(url) {
 }
 
 async function filtering(onlyBase, resultSet, target, blacklistPath) {
-    var resultFiltered = await blacklistFilter(resultSet, blacklistPath);
+    var resultFiltered = resultSet;
+    if (blacklistPath != undefined) {
+        resultFiltered = await blacklistFilter(resultSet, blacklistPath);
+    }
     resultFiltered = httpFilter(resultFiltered);
 
     // Depth-level Reporting to file
@@ -67,10 +63,8 @@ async function filtering(onlyBase, resultSet, target, blacklistPath) {
 
     return resultFiltered;
 }
-
 module.exports = {
     filtering,
-    validateLinkIsWebPage,
     blacklistFilter,
     httpFilter,
     IncludeBaseURLFIlter,
