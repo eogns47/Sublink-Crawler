@@ -5,3 +5,7 @@ blacklist.txt
 .prettier*
 *.txt
 test*
+/logs/
+*.log
+tes1t.js
+```

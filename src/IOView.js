@@ -1,5 +1,8 @@
 const fs = require('fs');
 // Read targets from a file
+const path = require('path');
+const Extensions = require('./Config/Extensions.js');
+
 async function readTargets(targetInput) {
     const targetPath = __dirname + '/../inputs/' + targetInput;
 
@@ -19,7 +22,67 @@ function writeResults(urlSet, resultOutput) {
     fs.writeFileSync(resultPath, JSON.stringify(urlSet, null, 4));
 }
 
+function printVerbose(text, verboseLevel = true) {
+    if (verboseLevel) {
+        // may be changed to integer later on
+        console.log(text);
+    }
+}
+
+async function readExtensionConfig() {
+    const filePath = path.join(__dirname, 'Config', 'Extensions.txt');
+    console.log(filePath);
+    fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading Extensions.txt:', err);
+            return;
+        }
+        // read extensions from file
+        Extensions = data.split('\n').map((line) => line.trim());
+        console.log(Extensions);
+        return Extensions;
+    });
+}
+
+async function classifyExtension(AllURLs) {
+    var extensions = Extensions.extensions;
+
+    var extensionMap = extensions.reduce((map, ext) => {
+        map[ext] = 0;
+        return map;
+    }, {});
+
+    AllURLs.map((url) => {
+        for (const ext of extensions) {
+            //consider when extension is uppercase
+            if (url.includes(ext) || url.includes(ext.toUpperCase())) {
+                extensionMap[ext]++;
+                break;
+            }
+        }
+    });
+
+    return extensionMap;
+}
+
+async function saveResults(target, resultPath, AllURLs) {
+    var endResult = {};
+    endResult[target] = {};
+
+    endResult[target].Extension = {};
+    endResult[target].URLs = AllURLs;
+
+    var extensionMap = await classifyExtension(AllURLs);
+    endResult[target].Extension = extensionMap;
+
+    endResult = writeResults(endResult, resultPath);
+}
+
 module.exports = {
     readTargets,
     writeResults,
+    printVerbose,
+    saveResults,
+    readExtensionConfig,
+    classifyExtension,
 };

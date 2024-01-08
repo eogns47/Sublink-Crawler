@@ -2,13 +2,8 @@ var yargs = require('yargs');
 const IOView = require('./IOView');
 const LinkCrawler = require('./LinkCrawler.js');
 const logger = require('../Logger/logger.js');
-
-function printVerbose(text, verboseLevel = verbose) {
-    if (verboseLevel) {
-        // may be changed to integer later on
-        console.log(text);
-    }
-}
+const { performance } = require('perf_hooks');
+const MessageHandler = require('./messageHandler.js');
 
 // arg: [alias, nargs, isrequired, defaultValue]
 const argsMap = {
@@ -54,7 +49,7 @@ async function main(targetPath, resultPath, blacklistPath, depth, full, onlyBase
         // see if target file exists
         var targets = await IOView.readTargets(targetPath);
     } catch (err) {
-        console.log(err.message);
+        MessageHandler.errorMessageHandler(err);
         return;
     }
 
@@ -62,68 +57,14 @@ async function main(targetPath, resultPath, blacklistPath, depth, full, onlyBase
     for (const target of targets) {
         const startTime = performance.now();
 
-        var endResult = {};
-        var currDepth = 1;
+        var AllURLs = await LinkCrawler.crawler(target, depth, blacklistPath, onlyBase);
 
-        var preURLs = [];
-        var curURLs = [];
-        curURLs.push(target);
-
-        while (currDepth < depth + 1 && targets.length > 0) {
-            // scrap till depth
-            printVerbose('Depth ' + currDepth + ' commenced');
-            printVerbose('-'.repeat(100));
-            printVerbose('URL Set counts: ' + curURLs.length);
-
-            var postURLs = [];
-
-            for (const curURL of curURLs) {
-                // Main
-                var results = await LinkCrawler.scrap(curURL);
-
-                var resultSet = Array.from(new Set(results)); // Remove duplicates
-
-                // Filtering results with blacklist
-                var resultFiltered = await LinkCrawler.blacklistFilter(resultSet, blacklistPath);
-                resultFiltered = LinkCrawler.httpFilter(resultFiltered);
-
-                // Depth-level Reporting to file
-                if (onlyBase) {
-                    resultFiltered = LinkCrawler.IncludeBaseURLFIlter(resultFiltered, target);
-                }
-
-                postURLs.push(...resultFiltered); // output as input for next iter
-            }
-            var postURLs = Array.from(new Set(postURLs)); // Remove duplicates
-
-            // exclude scrapped targets on next iter
-            const combinedArray = [...preURLs, ...curURLs];
-            postURLs = postURLs.filter((r) => !combinedArray.includes(r));
-
-            // Depth-level Reporting to file
-
-            // count postURLs print
-            printVerbose('NEW URL Set counts: ' + postURLs.length);
-            printVerbose('='.repeat(100) + '\n');
-
-            // add scrapped URLs to preURLs
-            preURLs = preURLs.concat(curURLs);
-
-            curURLs = postURLs;
-
-            currDepth++;
-        }
-        preURLs = preURLs.concat(curURLs);
-
-        endResult[target] = preURLs;
-
-        IOView.writeResults(endResult, resultPath);
-        logger.log('info', '에러처리');
+        IOView.saveResults(target, resultPath, AllURLs);
 
         const endTime = performance.now();
         const executionTimeInSeconds = (endTime - startTime) / 1000;
 
-        console.log(`${target}의 sublink 탐색에 소요된 시간: ${executionTimeInSeconds} 초`);
+        MessageHandler.infoMessageHandler(`${target} 의 sublink 탐색에 소요된 시간: ${executionTimeInSeconds} 초`);
     }
 }
 

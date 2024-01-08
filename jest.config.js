@@ -1,4 +1,7 @@
 module.exports = {
+    roots: ['<rootDir>'],
+    modulePaths: ['<rootDir>'],
+    moduleDirectories: ['node_modules'],
     moduleFileExtensions: ['js', 'json', 'jsx', 'ts', 'tsx', 'json'],
     transform: {
         '^.+\\.(js|jsx)?$': 'babel-jest',
