@@ -45,6 +45,9 @@ async function scrapAllURLs(curURLs, target, blacklistPath, onlyBase) {
 async function scrap(target) {
     try {
         const browser = await puppeteer.launch({
+            // executablePath: '/usr/bin/chromium-browser',
+            headless: true,
+            ignoreHTTPSErrors: true,
             args: [
                 '--disable-gpu', // gpu x
                 '--disable-font-subpixel-positioning', //disable font subpixel
@@ -73,8 +76,8 @@ async function scrap(target) {
 
         urls = urls.concat(curr_page_urls);
         /******************************************save contents******************************************/
-        curr_contesnts = await page.content();
-        fs.writeFileSync('../results/content.txt', JSON.stringify(curr_contesnts, null, 4));
+        // curr_contesnts = await page.content();
+        // fs.writeFileSync('../results/content.txt', JSON.stringify(curr_contesnts, null, 4));
         /******************************************save contents******************************************/
         await page.close();
         await browser.close();
