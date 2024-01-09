@@ -24,4 +24,5 @@ Options:   <br>
                                                                                            <br>
   `-h, --help  Show help`                                                          [boolean]<br>
 
-![link crawler Architecture drawio](https://github.com/eogns47/Sublink-Crawler/assets/102205852/5b566bac-d9d4-4fe0-b451-d162cea4bf23)
+![link crawler Architecture drawio (1)](https://github.com/eogns47/Sublink-Crawler/assets/102205852/3df0b92d-749b-4935-adb9-fa01326d1615)
+
