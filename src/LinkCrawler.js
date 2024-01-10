@@ -134,7 +134,7 @@ async function crawler(target, depth, blacklistPath, onlyBase) {
         postURLs = await excludeScrappedURLs(postURLs, preURLs, curURLs);
 
         // count postURLs print
-        printVerbose('NEW URL Set counts: ' + postURLs.length);
+        logger.info(target + 's NEW URL Set counts: ' + postURLs.length);
         printVerbose('-'.repeat(100) + '\n');
 
         // add scrapped URLs to preURLs

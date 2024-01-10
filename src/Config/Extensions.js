@@ -11,6 +11,8 @@ const ExtensionsEnum = {
     XLSX: '.xlsx',
     CSV: '.csv',
     XLSM: '.xlsm',
+    CHM: '.chm',
+    LMK: '.lmk',
 };
 
 // 확장자 배열 생성

@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const Extensions = require('./Config/Extensions.js');
 const Validator = require('./Validator.js');
+const logger = require('../Logger/logger.js');
 
 async function readTargets(targetInput) {
     const targetPath = __dirname + '/../inputs/' + targetInput;
@@ -20,7 +21,7 @@ function writeResults(urlSet, resultOutput) {
     var resultPath = __dirname + '/../results/';
     resultPath += resultOutput ? resultOutput : 'results.txt';
 
-    fs.writeFileSync(resultPath, JSON.stringify(urlSet, null, 4));
+    fs.appendFileSync(resultPath, JSON.stringify(urlSet, null, 4));
 }
 
 function printVerbose(text, verboseLevel = true) {
