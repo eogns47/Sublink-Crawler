@@ -3,7 +3,6 @@ targets.txt
 blacklist.txt
 .prettier*
 *.txt
-test*
 *.log
 tes1t.js
 ```

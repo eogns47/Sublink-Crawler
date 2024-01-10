@@ -4,6 +4,8 @@ const LinkCrawler = require('./LinkCrawler.js');
 const logger = require('../Logger/logger.js');
 const { performance } = require('perf_hooks');
 const MessageHandler = require('./messageHandler.js');
+const chalk = require('chalk');
+const printVerbose = IOView.printVerbose;
 
 // arg: [alias, nargs, isrequired, defaultValue]
 const argsMap = {
@@ -52,7 +54,8 @@ async function main(targetPath, resultPath, blacklistPath, depth, full, onlyBase
         MessageHandler.errorMessageHandler(err);
         return;
     }
-
+    IOView.setVerboseLevel(verbose);
+    const totalstartTime = performance.now();
     // loop from here
     for (const target of targets) {
         const startTime = performance.now();
@@ -62,10 +65,16 @@ async function main(targetPath, resultPath, blacklistPath, depth, full, onlyBase
         IOView.saveResults(target, resultPath, AllURLs);
 
         const endTime = performance.now();
-        const executionTimeInSeconds = (endTime - startTime) / 1000;
+        const executionTimeInSeconds = ((endTime - startTime) / 1000).toFixed(3);
 
-        MessageHandler.infoMessageHandler(`${target} 의 sublink 탐색에 소요된 시간: ${executionTimeInSeconds} 초`);
+        MessageHandler.infoMessageHandler(
+            'Time spent Crawling sublinks of ' + target + ' : ' + executionTimeInSeconds + ' sec'
+        );
+        printVerbose('\n');
     }
+    const totalEndTime = performance.now();
+    const totalExecutionTimeInSeconds = ((totalEndTime - totalstartTime) / 1000).toFixed(3);
+    MessageHandler.infoMessageHandler(`Total spent time for Crawling targets: ${totalExecutionTimeInSeconds} 초`);
 }
 
 // Execution

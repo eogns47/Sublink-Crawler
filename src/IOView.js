@@ -5,6 +5,12 @@ const Extensions = require('./Config/Extensions.js');
 const Validator = require('./Validator.js');
 const logger = require('../Logger/logger.js');
 
+var verboseLevel = true;
+
+function setVerboseLevel(level) {
+    verboseLevel = level;
+}
+
 async function readTargets(targetInput) {
     const targetPath = __dirname + '/../inputs/' + targetInput;
 
@@ -24,7 +30,7 @@ function writeResults(urlSet, resultOutput) {
     fs.appendFileSync(resultPath, JSON.stringify(urlSet, null, 4));
 }
 
-function printVerbose(text, verboseLevel = true) {
+function printVerbose(text) {
     if (verboseLevel) {
         // may be changed to integer later on
         console.log(text);
@@ -81,4 +87,5 @@ module.exports = {
     saveResults,
     readExtensionConfig,
     classifyExtension,
+    setVerboseLevel,
 };

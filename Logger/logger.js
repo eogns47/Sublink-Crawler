@@ -11,7 +11,7 @@ var transport = new winston.transports.DailyRotateFile({
     format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.printf((info) => {
-            return `[${moment().format('YYYY-MM-DD HH:mm:ss')}] ${info.level}: ${info.message}`;
+            return `[${moment().format('YYYY-MM-DD HH:mm:ss')}]${info.level}: ${info.message}`;
         })
     ),
 });

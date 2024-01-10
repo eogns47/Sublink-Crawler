@@ -13,6 +13,7 @@ const printVerbose = IOView.printVerbose;
 const fs = require('fs');
 const logger = require('../Logger/logger.js');
 const Validator = require('./Validator.js');
+const chalk = require('chalk');
 // https://stackoverflow.com/questions/9781218/how-to-change-node-jss-console-font-color
 
 function formatURL(href, base) {
@@ -48,6 +49,7 @@ async function scrap(target) {
             // executablePath: '/usr/bin/chromium-browser',
             headless: true,
             ignoreHTTPSErrors: true,
+            ignoreHTTPErrors: true,
             args: [
                 '--disable-gpu', // gpu x
                 '--disable-font-subpixel-positioning', //disable font subpixel
@@ -65,7 +67,7 @@ async function scrap(target) {
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3419.0 Safari/537.36'
         );
 
-        const response = await page.goto(target, { waitUntil: 'networkidle2', timeout: 0 }); // access target
+        const response = await page.goto(target, { waitUntil: 'networkidle2' }); // access target
 
         await page.waitFor(3000);
         const pageUrl = page.url();
@@ -122,20 +124,22 @@ async function crawler(target, depth, blacklistPath, onlyBase) {
     curURLs.push(target);
 
     printVerbose('='.repeat(100) + '\n');
-    printVerbose('🚀Target: ' + target + ' Crawling Started !\n');
+    printVerbose('🚀Target: ' + chalk.green(target) + ' Crawling Started !\n');
 
     while (currDepth < depth + 1) {
         // scrap till depth
-        printVerbose('Depth ' + currDepth + ' commenced');
+        printVerbose('Depth ' + chalk.green(currDepth) + ' commenced');
         printVerbose('-'.repeat(100));
-        printVerbose('URL Set counts: ' + curURLs.length);
+        printVerbose('URL Set counts: ' + curURLs.length + '\n');
         var postURLs = await scrapAllURLs(curURLs, target, blacklistPath, onlyBase);
         // exclude scrapped targets on next iter
         postURLs = await excludeScrappedURLs(postURLs, preURLs, curURLs);
 
         // count postURLs print
-        logger.info(target + 's NEW URL Set counts: ' + postURLs.length);
-        printVerbose('-'.repeat(100) + '\n');
+        MessageHandler.infoMessageHandler(
+            'NEW URL Set counts of ' + target + ' in depth ' + currDepth + ' : ' + postURLs.length
+        );
+        printVerbose('\n');
 
         // add scrapped URLs to preURLs
         preURLs = preURLs.concat(curURLs);
