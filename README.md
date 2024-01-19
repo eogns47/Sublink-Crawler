@@ -3,19 +3,36 @@
 🚀You Can find All Urls from base url!🚀 <br>
 Dynamic web crawler that uses dynamic browser (Puppeteer) which fetches all links on a page and its children. <br>
 
-## 💡How to use:
+## 💡How to use By Plain:
 
 1. Clone the repo and run `npm install puppeteer yargs`
 2. Create a file that lists scrapped targets on {root}/inputs/targets.txt
 3. Create a file that lists unscrapped targets on {root}/inputs/blacklist.txt
 4. Run `node index.js -t targets.txt -r results.txt -b blacklist.txt -d 1`
 
-5. Install Unit test tool `npm install --save-dev jest`
-6. Create a file that lists scrapped targets on {root}/inputs/targets.txt
-7. Create a file that lists unscrapped targets on {root}/inputs/blacklist.txt
-8. Run `node index.js -t targets.txt -r results.txt -b blacklist.txt -d 1`
+## 💡How to use By ExecBot:
 
-Options: <br>
+1. Clone the repo and run `npm install puppeteer yargs`
+2. pip install -r requirements.txt
+3. `python3 exec.py results.txt 1` (results.txt = resultsfile name , 1 = depth)
+
+## 💡How to use By Docker (Recommend):
+
+It works on amd64, arm64
+
+1. pull image from dockerhub ➡️[link](https://hub.docker.com/repository/docker/eogns47/linkcrawler/general)<br>
+   -Plain version: tag name `ServerCrawler`<br>
+   -ExecBot version: tag name `servercrawler_v2`
+2. docker run with some options `docker run -d eogns47/linkcrawler:{Your tag}`
+3. Connect container shell `docker exec -it {container id} /bin/sh`
+4. `python3 exec.py results.txt 1` (results.txt = resultsfile name , 1 = depth)
+
+## 💡How to Test:
+
+1. Install Unit test tool `npm install --save-dev jest`
+2. Run `npx jest`
+
+More Options: <br>
 `--version` Show version number [boolean] <br>
 `-t` Input file path [required] <br>
 `-u` Targets array list <br>
@@ -36,28 +53,40 @@ Options: <br>
 
 ```
 link-crawler
+├─ .dockerignore
+│
+├─ .gitignore
+├─ Dockerfile
+├─ ExecBot
+│  └─ exec.py
 ├─ Logger
 │  └─ logger.js
 ├─ README.md
 ├─ babel.config.js
 ├─ inputs
 │  └─ .gitkeep
+├─ results
+│  └─ .gitkee
 ├─ jest.config.js
 ├─ logs
 │  └─ .gitkeep
 ├─ node_modules
+│
 ├─ package-lock.json
 ├─ package.json
-├─ results
-│  └─ .gitkeep
 ├─ src
 │  ├─ Config
 │  │  └─ Extensions.js
 │  ├─ IOView.js
 │  ├─ LinkCrawler.js
 │  ├─ LinkPreprocessor.js
+│  ├─ Validator.js
 │  ├─ index.js
-│  └─ messageHandler.js
+│  ├─ messageHandler.js
+│  └─ tests
+│     ├─ File.test.js
+│     ├─ Link.test.js
+│     └─ Validate.test.js
 └─ yarn.lock
 
 ```
