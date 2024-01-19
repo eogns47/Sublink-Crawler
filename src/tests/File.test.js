@@ -43,6 +43,8 @@ describe('📜 File Read Test 📜', () => {
             '.xlsx': 0,
             '.csv': 0,
             '.xlsm': 0,
+            '.chm': 0,
+            '.lmk': 0,
         });
     });
 });
