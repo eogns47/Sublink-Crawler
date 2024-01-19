@@ -30,6 +30,13 @@ function writeResults(urlSet, resultOutput) {
     fs.appendFileSync(resultPath, JSON.stringify(urlSet, null, 4));
 }
 
+function writeErrorResults(url) {
+    var resultPath = __dirname + '/../results/';
+    resultPath += 'errorList.txt';
+
+    fs.appendFileSync(resultPath, url + '\n');
+}
+
 function printVerbose(text) {
     if (verboseLevel) {
         // may be changed to integer later on
@@ -88,4 +95,5 @@ module.exports = {
     readExtensionConfig,
     classifyExtension,
     setVerboseLevel,
+    writeErrorResults,
 };

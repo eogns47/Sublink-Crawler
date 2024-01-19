@@ -5,12 +5,12 @@ const logger = require('../Logger/logger.js');
 const { performance } = require('perf_hooks');
 const MessageHandler = require('./messageHandler.js');
 const chalk = require('chalk');
+const { exit } = require('process');
 const printVerbose = IOView.printVerbose;
 
 // arg: [alias, nargs, isrequired, defaultValue]
 const argsMap = {
     t: ['targets', 'Input file path', true, 'targets.txt'],
-    u: ['url', 'Targets array list', false, ['https://www.twitter.com']], // unhandled
     r: ['results', 'Output file path', false, 'results.txt'],
     d: ['depth', 'Crawling depth', false, 1],
     b: ['blacklist', 'Blacklist file path to prevent an url for being crawled (hard match)', false, './blacklist.txt'],
@@ -62,7 +62,7 @@ async function main(targetPath, resultPath, blacklistPath, depth, full, onlyBase
 
         var AllURLs = await LinkCrawler.crawler(target, depth, blacklistPath, onlyBase);
 
-        IOView.saveResults(target, resultPath, AllURLs);
+        await IOView.saveResults(target, resultPath, AllURLs);
 
         const endTime = performance.now();
         const executionTimeInSeconds = ((endTime - startTime) / 1000).toFixed(3);
@@ -75,6 +75,7 @@ async function main(targetPath, resultPath, blacklistPath, depth, full, onlyBase
     const totalEndTime = performance.now();
     const totalExecutionTimeInSeconds = ((totalEndTime - totalstartTime) / 1000).toFixed(3);
     MessageHandler.infoMessageHandler(`Total spent time for Crawling targets: ${totalExecutionTimeInSeconds} 초`);
+    exit(0);
 }
 
 // Execution

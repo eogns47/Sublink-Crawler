@@ -14,6 +14,7 @@ const fs = require('fs');
 const logger = require('../Logger/logger.js');
 const Validator = require('./Validator.js');
 const chalk = require('chalk');
+const shell = require('shelljs');
 // https://stackoverflow.com/questions/9781218/how-to-change-node-jss-console-font-color
 
 function formatURL(href, base) {
@@ -44,21 +45,21 @@ async function scrapAllURLs(curURLs, target, blacklistPath, onlyBase) {
 
 // Scrap
 async function scrap(target) {
+    const browser = await puppeteer.launch({
+        // executablePath: '/usr/bin/chromium-browser',
+        headless: true,
+        ignoreHTTPSErrors: true,
+        ignoreHTTPErrors: true,
+        args: [
+            '--disable-gpu', // gpu x
+            '--disable-font-subpixel-positioning', //disable font subpixel
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage', //dont use shared memory
+            '--window-size=1920x1080',
+        ],
+    });
     try {
-        const browser = await puppeteer.launch({
-            // executablePath: '/usr/bin/chromium-browser',
-            headless: true,
-            ignoreHTTPSErrors: true,
-            ignoreHTTPErrors: true,
-            args: [
-                '--disable-gpu', // gpu x
-                '--disable-font-subpixel-positioning', //disable font subpixel
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage', //dont use shared memory
-            ],
-        });
-
         var urls = []; // not a set just in case number of occurence needs to be counted
         const page = await browser.newPage(); // create new page
         await page.exposeFunction('formatURL', formatURL);
@@ -66,9 +67,15 @@ async function scrap(target) {
         await page.setUserAgent(
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3419.0 Safari/537.36'
         );
-
-        const response = await page.goto(target, { waitUntil: 'networkidle2' }); // access target
-
+        for (i = 0; i < 5; i++) {
+            try {
+                const response = await page.goto(target, { waitUntil: 'networkidle2' }); // access target
+                break;
+            } catch (error) {
+                MessageHandler.errorMessageHandler('!! ' + error + ' !! \nRetry ' + (i + 1) + ' times ...');
+                continue;
+            }
+        }
         await page.waitFor(3000);
         const pageUrl = page.url();
 
@@ -77,16 +84,19 @@ async function scrap(target) {
         curr_page_urls = await get_a_Tag(page);
 
         urls = urls.concat(curr_page_urls);
-        /******************************************save contents******************************************/
-        // curr_contesnts = await page.content();
-        // fs.writeFileSync('../results/content.txt', JSON.stringify(curr_contesnts, null, 4));
-        /******************************************save contents******************************************/
         await page.close();
-        await browser.close();
+
         return urls;
     } catch (error) {
-        MessageHandler.errorMessageHandler(error);
+        MessageHandler.errorMessageHandler('!!!!! ' + error + ' !!!!!');
+        // 에러가 난 경우 target을 results 하위 urls 하위에 텍스트파일로 저장
+        IOView.writeErrorResults(target);
         return []; // or throw error to handle it in the upper level
+    } finally {
+        await Promise.all((await browser.pages()).map((page) => page.close()));
+        await browser.close();
+        // shell.exec('pkill chrome');
+        // shell.exec('pkill chromium');
     }
 }
 

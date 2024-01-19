@@ -2,6 +2,7 @@ const logger = require('../Logger/logger.js');
 
 function errorMessageHandler(errorMessage) {
     console.log(errorMessage);
+
     const cleanErrorMessage = removeEmojis(errorMessage);
     logger.error(cleanErrorMessage);
 }
