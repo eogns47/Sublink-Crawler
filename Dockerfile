@@ -8,6 +8,10 @@ RUN apk add --no-cache --virtual .build-deps curl \
     && apk add --no-cache curl wget \
     && apk del .build-deps 
 
+
+# Copy Python files and install additional pip packages
+# Copy files under ExecBot directory
+
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser  
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true  
 ENV DISPLAY=:99  
@@ -20,11 +24,17 @@ RUN npm ci --only=production
 RUN npm install puppeteer  
 
 COPY . .
-ENV NODE_OPTIONS="--max-old-space-size=2048" 
+ENV NODE_OPTIONS="--max-old-space-size=2048"
 
-EXPOSE 3000
+# Install Python and pip packages
+RUN apk add --no-cache python3 py3-pip gcc musl-dev python3-dev
+RUN python3 -m venv /path/to/venv
+ENV PATH="/path/to/venv/bin:$PATH"
+RUN . /path/to/venv/bin/activate && pip install -r /var/app/ExecBot/requirements.txt
 
-CMD Xvfb :99 -screen 0 1024x768x16 -ac && node src/index.js -t targets.txt -r result.txt -d 1
+EXPOSE 8090
+
+CMD Xvfb :99 -screen 0 1024x768x16 -ac
 
 
 # Path: .dockerignore
