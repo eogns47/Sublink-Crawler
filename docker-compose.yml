@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+    linkcrawler:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        platform: linux/amd64
+        ports:
+            - '8090:8090'
+        volumes:
+            - potato:/var/app/logs
+            - potato:/var/app/results
+
+volumes:
+    potato:

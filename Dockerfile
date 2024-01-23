@@ -32,9 +32,12 @@ RUN python3 -m venv /path/to/venv
 ENV PATH="/path/to/venv/bin:$PATH"
 RUN . /path/to/venv/bin/activate && pip install -r /var/app/ExecBot/requirements.txt
 
+
 EXPOSE 8090
 
-CMD Xvfb :99 -screen 0 1024x768x16 -ac
+# RUN Xvfb :99 -screen 0 1024x768x16 -ac
+ENTRYPOINT ["sh","./entrypoint.sh"]
+
 
 
 # Path: .dockerignore

@@ -11,6 +11,13 @@ function setVerboseLevel(level) {
     verboseLevel = level;
 }
 
+async function folderExists(filePath) {
+    //makefolder
+    if (!fs.existsSync(filePath)) {
+        fs.mkdirSync(filePath);
+    }
+}
+
 async function readTargets(targetInput) {
     const targetPath = __dirname + '/../inputs/' + targetInput;
 
@@ -25,13 +32,25 @@ async function readTargets(targetInput) {
 // Write results to a file
 function writeResults(urlSet, resultOutput) {
     var resultPath = __dirname + '/../results/';
+    folderExists(resultPath);
     resultPath += resultOutput ? resultOutput : 'results.txt';
 
     fs.appendFileSync(resultPath, JSON.stringify(urlSet, null, 4));
 }
 
+function writeUrlInfo(url, content) {
+    var urlInfo = {};
+    urlInfo[url] = {};
+    urlInfo[url].content = content;
+    var resultPath = __dirname + '/../results/URLInfos/';
+    folderExists(resultPath);
+    resultPath += 'URLInfos.txt';
+    fs.appendFileSync(resultPath, JSON.stringify(urlInfo, null, 4));
+}
+
 function writeErrorResults(url) {
     var resultPath = __dirname + '/../results/';
+    folderExists(resultPath);
     resultPath += 'errorList.txt';
 
     fs.appendFileSync(resultPath, url + '\n');
@@ -96,4 +115,5 @@ module.exports = {
     classifyExtension,
     setVerboseLevel,
     writeErrorResults,
+    writeUrlInfo,
 };

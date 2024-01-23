@@ -76,12 +76,15 @@ async function scrap(target) {
                 continue;
             }
         }
+
         await page.waitFor(3000);
         const pageUrl = page.url();
 
         // scrapping
         var curr_page_urls = [];
         curr_page_urls = await get_a_Tag(page);
+
+        await scrapAllContents(page);
 
         urls = urls.concat(curr_page_urls);
         await page.close();
@@ -116,6 +119,11 @@ async function get_a_Tag(page) {
         pageUrl,
         curr_page_urls
     ));
+}
+
+async function scrapAllContents(page) {
+    var content = await page.content();
+    IOView.writeUrlInfo(page.url(), content);
 }
 
 function excludeScrappedURLs(postURLs, preURLs, curURLs) {

@@ -1,6 +1,5 @@
 *.log
 npm-debug.log
-results/
+results/*.txt
 .prettier*
-logs/
 ```

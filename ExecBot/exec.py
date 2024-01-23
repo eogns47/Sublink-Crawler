@@ -36,6 +36,11 @@ root_index = path_parts.index('ExecBot')
 relative_path_parts = path_parts[:root_index]
 relative_path = '/'.join(relative_path_parts)
 
+logfilepath = relative_path+'/logs/exec.log'
+if not os.path.exists(logfilepath):
+    os.system(f'touch {logfilepath}')
+    print(f'{logfilepath} is created')
+
 # # 로그 파일 설정
 logging.basicConfig(filename=relative_path+'/logs/exec.log',
                     format='(%(asctime)s) %(levelname)s:%(message)s',
